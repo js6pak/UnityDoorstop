@@ -6,12 +6,10 @@
 #define CAT(start, middle, end) CAT2(start, middle, end)
 #define STR2(A) #A
 #define STR(A) STR2(A)
+#define HEADER2(A) A.h
+#define HEADER(A) HEADER2(A)
 
-#ifndef IMPORT_PREFIX
-#define IMPORT_PREFIX mono
-#endif
-
-#define IMPORT_LIB STR(CAT(IMPORT_PREFIX, .h, ))
+#define IMPORT_LIB STR(HEADER(IMPORT_PREFIX))
 #define LOADER_FUNC_NAME CAT(load_, IMPORT_PREFIX, _funcs)
 
 #define DEF_CALL(retType, name, ...) typedef retType (*name##_t)(__VA_ARGS__);
@@ -24,7 +22,7 @@ struct {
 #undef DEF_CALL
 } IMPORT_PREFIX;
 
-inline void LOADER_FUNC_NAME(void *lib) {
+static inline void LOADER_FUNC_NAME(void *lib) {
 #define DEF_CALL(retType, name, ...)                                           \
     IMPORT_PREFIX.name = (name##_t)dlsym(lib, STR(CAT(IMPORT_PREFIX, _, name)));
 #include IMPORT_LIB

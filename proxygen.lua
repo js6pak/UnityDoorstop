@@ -1,10 +1,13 @@
 function add_proxydef(filename)
     on_load(function(target)
         local ptr_type = ""
+        local data_type = ""
         if is_arch("x86") then
             ptr_type = "DWORD"
+            data_type = "dd"
         elseif is_arch("x64") then
             ptr_type = "QWORD"
+            data_type = "dq"
         end
 
         local asm_defs = ""
@@ -17,14 +20,14 @@ function add_proxydef(filename)
         local funcs = io.readfile(filename):split("\n")
         for i, name in ipairs(funcs) do
             local func = string.trim(name)
-            asm_defs = asm_defs .. format("public %s\r\n", func)
-            asm_defs = asm_defs .. format("public __%s__\r\n", func)
+            asm_defs = asm_defs .. format("GLOBAL %s\r\n", func)
+            asm_defs = asm_defs .. format("GLOBAL __%s__\r\n", func)
 
-            asm_vars = asm_vars .. format("  __%s__ %s 0\r\n", func, ptr_type)
+            asm_vars = asm_vars .. format("  __%s__: %s 0\r\n", func, data_type)
 
             asm_jmps = asm_jmps .. format("%s:\r\n", func)
             asm_jmps = asm_jmps ..
-                           format("  jmp %s ptr __%s__\r\n", ptr_type, func)
+                           format("  jmp %s [__%s__]\r\n  ret\r\n", ptr_type, func)
 
             proxy_defs = proxy_defs ..
                              format("extern FARPROC __%s__;\r\n", func)
@@ -63,5 +66,6 @@ function add_proxydef(filename)
     end)
     add_files("build/dllproxy.asm")
     add_files("build/proxy.c")
-    add_shflags("-def:build/dll.def", {force = true})
+    -- add_files("build/dll.def")
+    add_asflags("-f", is_arch("x64") and "win64" or "win32", {force=true})
 end
