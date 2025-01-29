@@ -38,11 +38,13 @@ jobs:
         with:
           name: doorstop_win_release
           path: artifacts/release
+          include-hidden-files: true
       - name: Upload Verbose
         uses: actions/upload-artifact@v4
         with:
           name: doorstop_win_verbose
           path: artifacts/verbose
+          include-hidden-files: true
 
   build-linux:
     runs-on: ubuntu-latest
@@ -87,16 +89,19 @@ jobs:
         with:
           name: doorstop_linux_release
           path: artifacts/release
+          include-hidden-files: true
       - name: Upload Verbose
         uses: actions/upload-artifact@v4
         with:
           name: doorstop_linux_verbose
           path: artifacts/verbose
+          include-hidden-files: true
       - name: Upload Debug
         uses: actions/upload-artifact@v4
         with:
           name: doorstop_linux_debug
           path: artifacts/debug
+          include-hidden-files: true
 
   build-macos:
     runs-on: macos-latest
@@ -130,16 +135,19 @@ jobs:
         with:
           name: doorstop_macos_release
           path: artifacts/release
+          include-hidden-files: true
       - name: Upload Verbose
         uses: actions/upload-artifact@v4
         with:
           name: doorstop_macos_verbose
           path: artifacts/verbose
+          include-hidden-files: true
       - name: Upload Debug
         uses: actions/upload-artifact@v4
         with:
           name: doorstop_macos_debug
           path: artifacts/debug
+          include-hidden-files: true
 
   collect:
     runs-on: ubuntu-latest
@@ -156,7 +164,7 @@ jobs:
           path: artifacts
       - name: Grab version
         run: |
-          ls -R
+          ls -Ra
           VERSION=$(cat artifacts/doorstop_win_release/x86/.doorstop_version)
           echo "doorstop_version=$VERSION" >> $GITHUB_ENV
       - name: Create zips
