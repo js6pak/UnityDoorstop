@@ -156,6 +156,7 @@ jobs:
           path: artifacts
       - name: Grab version
         run: |
+          ls -R
           VERSION=$(cat artifacts/doorstop_win_release/x86/.doorstop_version)
           echo "doorstop_version=$VERSION" >> $GITHUB_ENV
       - name: Create zips
